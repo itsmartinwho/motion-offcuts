@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Card transitions</title>
+<meta name="description" content="Five ways to move between full-screen cards on one scroll, in plain JavaScript.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aboreto&family=Cormorant+Garamond:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap">
+<link rel="stylesheet" href="../shared/stage.css">
+<style>
+  :root { --display: "Cormorant Garamond", Georgia, serif; --serif: "EB Garamond", Georgia, serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.5 var(--serif);
+    padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 48px 88px; display: grid; gap: 40px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  p { margin: 0; }
+  .caps { font-family: var(--caps); letter-spacing: .14em; font-size: 12px; color: var(--muted); }
+  header { display: grid; gap: 16px; max-width: 44rem; }
+  h1 { font: 400 clamp(40px, 6.4vw, 68px)/1 var(--display); margin: 0; letter-spacing: -.01em; }
+  .dek { font-size: 20px; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 14px 28px; padding-block: 14px; border-block: 1px solid var(--rule); background: var(--paper); z-index: 10; }
+  .control { display: grid; gap: 8px; }
+  @media (min-width: 900px) { .controls { position: sticky; top: 0; } }
+
+  .grid { display: grid; gap: 48px 28px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid > figure.wide { grid-column: 1 / -1; }
+  @media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  .hud[hidden] { display: none; }
+  figure { margin: 0; display: grid; gap: 12px; align-content: start; min-width: 0; }
+  figcaption { display: grid; gap: 4px; }
+  .name { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .code { font: 13px var(--caps); letter-spacing: .16em; color: var(--accent); }
+  .title { font: 500 26px/1.1 var(--display); }
+  .idea { max-width: 36rem; }
+  .src { font: 11px var(--caps); letter-spacing: .14em; color: var(--muted); }
+  footer { max-width: 44rem; color: var(--muted); font-size: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="caps"><a href="../">motion-offcuts</a> / card-transitions</p>
+    <h1>Card transitions</h1>
+    <p class="dek">Five ways to move between full-screen cards on one scroll. Scroll inside a frame, or press Play. The cards are stand-ins painted in code.</p>
+  </header>
+
+  <div class="controls" role="group" aria-label="Settings for every frame">
+    <div class="control"><span class="caps">Input</span>
+      <div class="seg" data-setting="smooth"><button type="button" data-value="on" aria-pressed="true">Smoothed</button><button type="button" data-value="off">Raw</button></div></div>
+    <div class="control"><span class="caps">Settle</span>
+      <div class="seg" data-setting="settle"><button type="button" data-value="on">On</button><button type="button" data-value="off" aria-pressed="true">Off</button></div></div>
+    <div class="control"><span class="caps">Ground</span>
+      <div class="seg" data-setting="ground"><button type="button" data-value="ink" aria-pressed="true">Ink</button><button type="button" data-value="white">White grid</button></div></div>
+    <div class="control"><span class="caps">Index</span>
+      <div class="seg" data-setting="index"><button type="button" data-value="on">On</button><button type="button" data-value="off" aria-pressed="true">Off</button></div></div>
+  </div>
+
+  <div class="grid">
+    <figure class="wide">
+      <div class="stage" data-mode="scroll" data-sketch="./helix.js#helix"></div>
+      <figcaption>
+        <div class="name"><span class="code">helix.js</span><span class="title">Helix</span></div>
+        <p class="idea">The cards on a spiral whose axis leans, like a corkscrew. The camera draws back mid-turn, so three cards show, corners rounding, shadows falling on the page.</p>
+        <p class="src">After Simon Rogers' ribbon and Unveil's stacked records</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-mode="scroll" data-sketch="./helix.js#calm"></div>
+      <figcaption>
+        <div class="name"><span class="code">helix.js</span><span class="title">Calm</span></div>
+        <p class="idea">The same helix upright, with a third of the pull-back, holding longer than it turns.</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-mode="scroll" data-sketch="./ribbon.js#ribbon"></div>
+      <figcaption>
+        <div class="name"><span class="code">ribbon.js</span><span class="title">Ribbon</span></div>
+        <p class="idea">One strip, joined by half twists that carry the next card's name.</p>
+        <p class="src">After Simon Rogers' ribbon</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-mode="scroll" data-sketch="./crate.js#crate"></div>
+      <figcaption>
+        <div class="name"><span class="code">crate.js</span><span class="title">Crate</span></div>
+        <p class="idea">The cards as records in a diagonal crate: settle, slide, lift.</p>
+        <p class="src">After Unveil's stacked records</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-mode="scroll" data-sketch="./sheets.js#sheets"></div>
+      <figcaption>
+        <div class="name"><span class="code">sheets.js</span><span class="title">Sheets</span></div>
+        <p class="idea">The next card slides up over the last, which steps back and dims.</p>
+      </figcaption>
+    </figure>
+  </div>
+
+  <footer>MIT licence. <a href="README.md">How to use these in your own page</a>.</footer>
+</div>
+<script type="module" src="../shared/runtime.js"></script>
+</body>
+</html>

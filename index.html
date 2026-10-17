@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Motion offcuts</title>
+<meta name="description" content="Animations cut from jjmartin.co's home page, free to reuse.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aboreto&family=Cormorant+Garamond:wght@400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+  /* One column: a title, a paragraph, and the three demos as rows. Labels are
+     Aboreto, names Cormorant Garamond, sentences EB Garamond. */
+  :root {
+    --paper: #ffffff; --ink: #1a1a1a; --muted: #6b6d73; --rule: #e5e5e7; --accent: #2a3fd1; --thumb: #070b22;
+    --caps: Aboreto, Georgia, serif; --display: "Cormorant Garamond", Georgia, serif; --serif: "EB Garamond", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #0d0e12; --ink: #ecebe8; --muted: #9a9ca3; --rule: #25272e; --accent: #9aa8ff; --thumb: #05071a; color-scheme: dark; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 19px/1.5 var(--serif);
+    padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left)); }
+  .wrap { max-width: 880px; margin: 0 auto; padding-block: 64px 80px; display: grid; gap: 48px; }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  p { margin: 0; }
+  .caps { font: 12px var(--caps); letter-spacing: .14em; color: var(--muted); }
+  header { display: grid; gap: 18px; }
+  h1 { font: 400 clamp(46px, 9vw, 84px)/1 var(--display); margin: 0; letter-spacing: -.01em; }
+  .dek { font-size: 22px; max-width: 34rem; }
+  .about { max-width: 38rem; color: var(--muted); }
+
+  .groups { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  .group a { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 8px 32px; align-items: center; padding-block: 28px; border-bottom: 1px solid var(--rule); text-decoration: none; }
+  .group .num { font: 13px var(--caps); letter-spacing: .2em; color: var(--accent); }
+  .group h2 { font: 500 clamp(30px, 5vw, 40px)/1.1 var(--display); margin: 2px 0 6px; }
+  .group h2 span { text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: 6px; transition: text-decoration-color .2s; }
+  .group a:hover h2 span, .group a:focus-visible h2 span { text-decoration-color: currentColor; }
+  .group .line { max-width: 28rem; }
+  .group .pieces { font: 11px/1.8 var(--caps); letter-spacing: .14em; color: var(--muted); margin-top: 8px; }
+  .group img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; background: var(--thumb); border-radius: 3px; }
+  @media (max-width: 640px) {
+    .wrap { padding-block: 40px 56px; gap: 36px; }
+    .group a { grid-template-columns: minmax(0, 1fr); }
+    .group img { grid-row: 1; }
+  }
+
+  footer { display: grid; gap: 8px; font-size: 16px; color: var(--muted); max-width: 38rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="caps">Open source, MIT</p>
+    <h1>Motion offcuts</h1>
+    <p class="dek">Animations cut from jjmartin.co's home page, free to reuse.</p>
+    <p class="about">Pieces JJ designed for the home page of his site and then cut, in October 2026. Each is a small module in plain JavaScript, shown here on stand-in pictures made in code. Take what is useful.</p>
+  </header>
+
+  <ul class="groups">
+    <li class="group"><a href="floating-marks/">
+      <div>
+        <span class="num">01</span>
+        <h2><span>Floating marks</span></h2>
+        <p class="line">A few marks cross a hero picture while a figure stands in it.</p>
+        <p class="pieces">Spheres · Coins · Orbit · Deck · Index</p>
+      </div>
+      <img src="floating-marks/screenshots/spheres.jpg" alt="Three spheres rising through a blue picture" width="1208" height="755" loading="lazy">
+    </a></li>
+    <li class="group"><a href="figure-to-sprite/">
+      <div>
+        <span class="num">02</span>
+        <h2><span>Figure to sprite</span></h2>
+        <p class="line">A picture turns to type, and the type to a sprite that plays on in the rain.</p>
+        <p class="pieces">Erosion · Rain · Retype · Four palettes</p>
+      </div>
+      <img src="figure-to-sprite/screenshots/erosion.jpg" alt="A figure turning into type in the rain" width="1180" height="738" loading="lazy">
+    </a></li>
+    <li class="group"><a href="card-transitions/">
+      <div>
+        <span class="num">03</span>
+        <h2><span>Card transitions</span></h2>
+        <p class="line">Five ways to move between full-screen cards on one scroll.</p>
+        <p class="pieces">Helix · Calm · Ribbon · Crate · Sheets</p>
+      </div>
+      <img src="card-transitions/screenshots/helix.jpg" alt="Two cards on a spiral, mid-turn" width="1180" height="738" loading="lazy">
+    </a></li>
+  </ul>
+
+  <footer>
+    <p>By <a href="https://github.com/itsmartinwho">José (JJ) Martín Quesada</a>. MIT licence, see the <a href="README.md">README</a> for credits and how to use a piece in your own page.</p>
+  </footer>
+</div>
+</body>
+</html>

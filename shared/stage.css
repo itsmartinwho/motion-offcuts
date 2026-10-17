@@ -1,0 +1,31 @@
+/* motion-offcuts: the stage, its controls and the toggles. Pages add their own type. */
+:root {
+  --paper: #ffffff; --ink: #1a1a1a; --muted: #6b6d73; --rule: #e5e5e7; --accent: #2a3fd1; --stage: #070b22;
+  --caps: Aboreto, Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper: #0d0e12; --ink: #ecebe8; --muted: #9a9ca3; --rule: #25272e; --accent: #9aa8ff; --stage: #05071a; color-scheme: dark; }
+}
+.stage { position: relative; aspect-ratio: 16 / 10; max-width: 100%; overflow: hidden; background: var(--stage); border-radius: 3px; isolation: isolate; }
+.stage > img.still, .stage .fill { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; }
+.stage[data-state="missing"]::after { content: "Sketch not found"; position: absolute; inset: 0; display: grid; place-items: center; font: 12px var(--caps); letter-spacing: .14em; color: #8d93b8; }
+.stage[data-mode="scroll"] { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.stage[data-mode="scroll"]::-webkit-scrollbar { display: none; }
+.track { position: relative; }
+.view { position: sticky; top: 0; overflow: hidden; background: #05071a; }
+.ground-white .view { background: linear-gradient(#0000 calc(100% - 1px), #00000012 0) 0 0 / 100% 28px, linear-gradient(90deg, #0000 calc(100% - 1px), #00000012 0) 0 0 / 28px 100%, #f6f6f4; }
+.ground-ink .view { background: #05071a; }
+.hud { position: absolute; left: 3.2%; bottom: 4%; z-index: 50; margin: 0; padding: 0; list-style: none; display: flex; gap: 1.6em; font: 10px var(--caps); letter-spacing: .16em; color: #fff; pointer-events: none; mix-blend-mode: difference; }
+.hud[hidden] { display: none; }
+.hud li { opacity: .38; transition: opacity .3s; white-space: nowrap; }
+.hud li.on { opacity: 1; }
+.hud span { opacity: .6; margin-right: .3em; }
+.scrub { display: flex; align-items: center; gap: 12px; min-width: 0; margin-top: 10px; }
+.scrub input { flex: 1; min-width: 0; accent-color: var(--accent); }
+.scrub .hint { font: 11px var(--caps); letter-spacing: .14em; color: var(--muted); }
+button { font: 11px var(--caps); letter-spacing: .14em; color: var(--ink); background: none; border: 1px solid var(--rule); border-radius: 999px; padding: 7px 13px 6px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.play { min-width: 64px; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }

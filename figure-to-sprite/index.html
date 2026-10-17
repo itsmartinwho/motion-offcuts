@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Figure to sprite</title>
+<meta name="description" content="A picture turns to type, the type turns to a 1-bit sprite, and the sprite plays in the rain. Three transitions and four palettes.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aboreto&family=Cormorant+Garamond:wght@400;500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap">
+<link rel="stylesheet" href="../shared/stage.css">
+<style>
+  /* The page: a reading column, the stage, its two sets of toggles, then what
+     each option does. Type is the site's three faces. */
+  :root { --display: "Cormorant Garamond", Georgia, serif; --serif: "EB Garamond", Georgia, serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.5 var(--serif); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 48px 88px; display: grid; gap: 40px; }
+  header { display: grid; gap: 16px; max-width: 46rem; }
+  .caps { font: 12px var(--caps); letter-spacing: .14em; color: var(--muted); }
+  .caps a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+  h1 { font: 400 clamp(44px, 7vw, 76px)/1 var(--display); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+  p { margin: 0; }
+  .dek { font-size: 20px; max-width: 40rem; }
+  .note { font-size: 16px; color: var(--muted); max-width: 40rem; }
+  figure { margin: 0; display: grid; gap: 14px; min-width: 0; }
+  .controls { display: grid; gap: 12px; }
+  .control-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+  .control-row > .caps { min-width: 92px; }
+  .legend { display: grid; gap: 14px 28px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); }
+  .legend div { display: grid; gap: 4px; font-size: 16px; align-content: start; }
+  .legend b { font: 12px var(--caps); letter-spacing: .14em; font-weight: 400; color: var(--ink); }
+  .legend span { color: var(--muted); }
+  .legend em { font-style: normal; color: var(--accent); }
+  code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  footer { border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 8px; }
+  footer p { font-size: 15px; color: var(--muted); max-width: 46rem; }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  @media (max-width: 640px) { body { font-size: 17px; } .wrap { gap: 32px; padding-block: 32px 64px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="caps"><a href="../">motion-offcuts</a> · figure to sprite</p>
+    <h1>Figure to sprite</h1>
+    <p class="dek">A picture turns to type, and the type turns to a 1-bit sprite that plays on in the rain. Three ways across and four palettes, cut from a hero that kept one of each.</p>
+    <p class="note">The figure and the sprite are generated in code: a lit 3D bust and a sailboat on a 256 by 256 grid, 12 frames. Swap <code>placeholders.js</code> for your own picture and film and the transitions follow.</p>
+  </header>
+
+  <figure>
+    <div class="stage" data-sketch="./transitions.js#transitions"></div>
+    <div class="controls">
+      <div class="control-row">
+        <span class="caps">Transition</span>
+        <div class="seg" data-setting="transition" role="group" aria-label="Transition">
+          <button type="button" data-value="erosion">Erosion</button>
+          <button type="button" data-value="rain" aria-pressed="true">Rain</button>
+          <button type="button" data-value="retype">Retype · the reference</button>
+        </div>
+      </div>
+      <div class="control-row">
+        <span class="caps">Palette</span>
+        <div class="seg" data-setting="palette" role="group" aria-label="Palette">
+          <button type="button" data-value="position">Position</button>
+          <button type="button" data-value="cyanotype">Cyanotype</button>
+          <button type="button" data-value="bright" aria-pressed="true">Bright</button>
+          <button type="button" data-value="role">Role</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <div><b>Erosion</b><span>Cells turn from a point on the figure outward, with noise, into square pixels. Two textures at two sizes fight halfway, and the sprite is bigger than the figure, so the scale jumps.</span></div>
+      <div><b>Rain</b><span>The type falls with the rain, column by column. A beat of rain alone, then the sprite condenses out of the falling drops.</span></div>
+      <div><b>Retype <em>· reference</em></b><span>One glyph grid. A sweep at the rain's slant re-types each cell, like a departure board, until the grid holds the sprite. This is the one jjmartin.co kept.</span></div>
+    </div>
+    <div class="legend">
+      <div><b>Position</b><span>Each cell takes the colour of the picture under it, lifted. This was the original. On a different shape it puts colours in the wrong places: skin on a sail, a jacket on a hull.</span></div>
+      <div><b>Cyanotype</b><span>One blue ramp, from deep blue to ice white, for figure and sprite alike.</span></div>
+      <div><b>Bright</b><span>White at three strengths, and the sprite's one thin accent part, its pennant, alone in pale teal.</span></div>
+      <div><b>Role</b><span>The picture's own colours placed by part: light fill, mid, outline, and the accent in skin.</span></div>
+    </div>
+  </figure>
+
+  <footer>
+    <p class="caps">Notes</p>
+    <p>The loop is 12 seconds: the picture, a sweep to type, a hold, the transition, the sprite. The rain falls from the first frame to the last. Frames run only while the stage is on screen and the tab is showing. Press play, or drag the scrubber to stop on any frame.</p>
+    <p>MIT licence. The bust, the boat and the glass are in <code>placeholders.js</code> and are yours to use.</p>
+  </footer>
+</div>
+<script type="module" src="../shared/runtime.js"></script>
+</body>
+</html>

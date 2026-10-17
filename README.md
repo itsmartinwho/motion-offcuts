@@ -1,0 +1,80 @@
+# motion-offcuts
+
+Animations cut from [jjmartin.co](https://jjmartin.co)'s home page, free to reuse.
+
+These are pieces JJ designed for the home page of his site and then cut, in October 2026. Each one is a small module in plain JavaScript, with a demo page that runs every piece of its group. The demos use stand-in pictures made in code, so there is nothing to download and nothing of the site's own imagery in them. Take what is useful.
+
+## What is here
+
+### [floating-marks](floating-marks/)
+
+A few marks cross a hero picture while a figure stands in it. Spheres, coins, an orbit, a deck of plates and a quiet index.
+
+[![Floating marks](floating-marks/screenshots/spheres.jpg)](floating-marks/)
+
+### [figure-to-sprite](figure-to-sprite/)
+
+A picture turns to type, and the type to a 1-bit sprite that plays on in the rain. Three ways across (erosion, rain, retype) and four palettes.
+
+[![Figure to sprite](figure-to-sprite/screenshots/erosion.jpg)](figure-to-sprite/)
+
+### [card-transitions](card-transitions/)
+
+Five ways to move between full-screen cards on one scroll. The helix is the one that shipped; calm, ribbon, crate and sheets are the options it was chosen from.
+
+[![Card transitions](card-transitions/screenshots/helix.jpg)](card-transitions/)
+
+Each folder has its own README with the pieces, their options and where they came from.
+
+## Run it
+
+There is no build step and nothing to install. Any static server will do:
+
+```
+python3 -m http.server
+```
+
+Then open `http://localhost:8000/`. The demo pages need a server because they load ES modules.
+
+Pages load Aboreto, Cormorant Garamond and EB Garamond from Google Fonts. Everything else is in the repo.
+
+## Use a piece in your own page
+
+Every piece is a module that exports `sketches = { name: async (env) => sketch }`. `shared/runtime.js` mounts them, runs their frames only while they are on screen, and draws the controls:
+
+```html
+<link rel="stylesheet" href="shared/stage.css">
+<div class="stage" data-sketch="./floating-marks/coins.js#coins"></div>
+<script type="module" src="shared/runtime.js"></script>
+```
+
+What a factory gets, `env`:
+
+- `stage`: the element to draw into.
+- `canvas(type)`: a canvas filling the stage at the device's density, as `{ canvas, ctx, w, h, dpr }`.
+- `img(src)`: a promise of an image.
+- `settings`: the state of the page's toggles.
+- `reduced`: whether the reader asked for reduced motion.
+
+What it returns: a sketch with `render(u, time, dt)`, where `u` runs 0 to 1 over `duration` seconds (a loop), or for the scroll pieces `render(s)` with `s` the scroll in screens, plus an optional `resize(w, h)`.
+
+To use one without the runtime, import the module, call `sketches.name(env)` with an `env` of your own, and call `render` from your own loop. The header of `shared/runtime.js` is the full contract.
+
+The pictures the pieces draw over (the figure, the marks, the cards) are in each group's `placeholders.js`. Swap that file for your own and the pieces follow.
+
+## Credits
+
+The pieces are reworkings of ideas, not copies of anyone's code:
+
+- 100k.studio's floating balls, for the spheres.
+- Unveil's stacked records, for the deck, the crate and the helix's stations, and its filter bar, for the index.
+- Simon Rogers' ribbon (loadmo.re), for the ribbon and the helix.
+- Bureau Cool's orbit tile, for the orbit.
+- The split-flap departure board, for the retype.
+- YUDHO's "I will survive" inspired the idea of a sprite in the rain. None of its art is included.
+
+## Licence
+
+MIT, see [LICENSE](LICENSE).
+
+By José (JJ) Martín Quesada, [@itsmartinwho](https://github.com/itsmartinwho).

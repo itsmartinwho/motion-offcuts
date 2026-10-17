@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floating marks</title>
+<meta name="description" content="Five ways to bring a few marks across a hero picture: WebGL spheres, engraved coins, labels on a ring, a deck of plates, and an index.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aboreto&family=Cormorant+Garamond:wght@400;500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap">
+<link rel="stylesheet" href="../shared/stage.css">
+<style>
+  /* The page: one reading column, then each piece as a working stage with its
+     name, source and a line on what it does. Type is the site's three faces. */
+  :root { --display: "Cormorant Garamond", Georgia, serif; --serif: "EB Garamond", Georgia, serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.5 var(--serif); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 48px 88px; display: grid; gap: 56px; }
+  header { display: grid; gap: 16px; max-width: 46rem; }
+  .caps { font: 12px var(--caps); letter-spacing: .14em; color: var(--muted); }
+  .caps a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+  h1 { font: 400 clamp(44px, 7vw, 76px)/1 var(--display); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+  p { margin: 0; }
+  .dek { font-size: 20px; max-width: 40rem; }
+  .note { font-size: 16px; color: var(--muted); max-width: 40rem; }
+  .grid { display: grid; gap: 44px 28px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); }
+  figure { margin: 0; display: grid; gap: 12px; align-content: start; min-width: 0; }
+  figcaption { display: grid; gap: 6px; }
+  .name { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .code { font: 13px var(--caps); letter-spacing: .16em; color: var(--accent); }
+  .title { font: 500 26px/1.1 var(--display); }
+  .src { font: 11px var(--caps); letter-spacing: .14em; color: var(--muted); }
+  .idea { font-size: 17px; max-width: 34rem; }
+  .usage { font-size: 15px; color: var(--muted); max-width: 34rem; }
+  code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  footer { border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 8px; }
+  footer p { font-size: 15px; color: var(--muted); max-width: 46rem; }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  @media (max-width: 640px) { body { font-size: 17px; } .wrap { gap: 44px; padding-block: 32px 64px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="caps"><a href="../">motion-offcuts</a> · floating marks</p>
+    <h1>Floating marks</h1>
+    <p class="dek">A few marks cross a hero picture while a figure stands in it. Five ways to do it, from a WebGL sphere to a quiet index. Each one is a module you can lift.</p>
+    <p class="note">The picture here is generated in code: a satin backdrop, a bust, three invented marks. Swap <code>placeholders.js</code> for your own and the pieces follow.</p>
+  </header>
+
+  <div class="grid">
+    <figure>
+      <div class="stage" data-sketch="./spheres.js#spheres"></div>
+      <figcaption>
+        <div class="name"><span class="code">01</span><span class="title">Spheres</span></div>
+        <p class="src">After 100k.studio's floating balls · WebGL2</p>
+        <p class="idea">One sphere a mark. They rise through the picture turning, lit softly from the upper left, with the backdrop bent into their rims. Each wears its mark on a finish: pale and pearly, brushed silver, black.</p>
+        <p class="usage">Needs WebGL2; without it you get the picture and no spheres.</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-sketch="./coins.js#coins"></div>
+      <figcaption>
+        <div class="name"><span class="code">02</span><span class="title">Coins</span></div>
+        <p class="src">After an engraved corner coin · Canvas 2D</p>
+        <p class="idea">The marks minted as thin medallions. They rise turning on edge, so each reads as an object with a rim, at a third of a sphere's size.</p>
+        <p class="usage">If the metal gets shinier than this it starts to look like crypto.</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-sketch="./orbit.js#orbit"></div>
+      <figcaption>
+        <div class="name"><span class="code">03</span><span class="title">Orbit</span></div>
+        <p class="src">After Bureau Cool's Orbit · Canvas 2D</p>
+        <p class="idea">Three names ride one thin tilted ring. It passes behind the figure and in front of the chest, and each name is bigger and brighter as it comes round the front.</p>
+        <p class="usage">Keep the ring thin, or it reads as a halo.</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-sketch="./deck.js#deck"></div>
+      <figcaption>
+        <div class="name"><span class="code">04</span><span class="title">Deck</span></div>
+        <p class="src">After Unveil's stacked records · Canvas 2D</p>
+        <p class="idea">Three plates, each a picture with its mark, rise at three depths. The far one is out of focus and passes behind the figure; the near ones are sharp and cast a shadow.</p>
+        <p class="usage">The plates are the cards you would show next, so the hero opens the set.</p>
+      </figcaption>
+    </figure>
+    <figure>
+      <div class="stage" data-sketch="./index.js#index"></div>
+      <figcaption>
+        <div class="name"><span class="code">05</span><span class="title">Index</span></div>
+        <p class="src">Subtraction · Canvas 2D</p>
+        <p class="idea">Nothing floats. The hero is the figure and a name; an index at the foot lists the sections and lights one at a time, a hairline drawing under it. The backdrop pushes in so slowly it only looks alive.</p>
+        <p class="usage">It goes with any of the others.</p>
+      </figcaption>
+    </figure>
+  </div>
+
+  <footer>
+    <p class="caps">Notes</p>
+    <p>Each piece loops. Frames run only while the stage is on screen and the tab is showing. Under reduced motion the pieces rest on one frame until you press play. The scrubber under each stage moves the loop by hand.</p>
+    <p>MIT licence. The invented marks, the bust and the satin are in <code>placeholders.js</code> and are yours to use.</p>
+  </footer>
+</div>
+<script type="module" src="../shared/runtime.js"></script>
+</body>
+</html>
