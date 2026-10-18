@@ -1,8 +1,8 @@
 # motion-offcuts
 
-Animations cut from [jjmartin.co](https://jjmartin.co)'s home page, free to reuse.
+Animations cut from [jjmartin.co](https://jjmartin.co), free to reuse.
 
-These are pieces JJ designed for the home page of his site and then cut, in October 2026. Each one is a small module in plain JavaScript, with a demo page that runs every piece of its group. The demos use stand-in pictures made in code, so there is nothing to download and nothing of the site's own imagery in them. Take what is useful.
+These are pieces JJ designed for his site and then cut, in October 2026: most from the home page, and the grid that sat behind the rest of it. Each one is a small module in plain JavaScript, with a demo page that runs every piece of its group. The demos use stand-in pictures made in code, so there is nothing to download and nothing of the site's own imagery in them. Take what is useful.
 
 ## What is here
 
@@ -23,6 +23,12 @@ A picture turns to type, and the type to a 1-bit sprite that plays on in the rai
 Five ways to move between full-screen cards on one scroll. The helix is the one that shipped; calm, ribbon, crate and sheets are the options it was chosen from.
 
 [![Card transitions](card-transitions/screenshots/helix.jpg)](card-transitions/)
+
+### [bulging-grid](bulging-grid/)
+
+A hairline grid that bulges under the pointer and under three slow swells that drift and breathe. The background of the site's blog, press and contact pages.
+
+[![Bulging grid](bulging-grid/screenshots/grid.jpg)](bulging-grid/)
 
 Each folder has its own README with the pieces, their options and where they came from.
 

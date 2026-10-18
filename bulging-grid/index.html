@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bulging grid</title>
+<meta name="description" content="A hairline grid that bulges under the pointer and under three slow swells that drift and breathe. Canvas 2D, no dependencies.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aboreto&family=Cormorant+Garamond:wght@400;500&family=EB+Garamond:ital,wght@0,400;1,400&display=swap">
+<link rel="stylesheet" href="../shared/stage.css">
+<style>
+  /* The page: one reading column, then the grid as a working stage with its
+     name, source and a line on what it does. Type is the site's three faces.
+     The stage keeps the site's own ground, white, in either colour scheme. */
+  :root { --display: "Cormorant Garamond", Georgia, serif; --serif: "EB Garamond", Georgia, serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.5 var(--serif); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 48px 88px; display: grid; gap: 56px; }
+  header { display: grid; gap: 16px; max-width: 46rem; }
+  .caps { font: 12px var(--caps); letter-spacing: .14em; color: var(--muted); }
+  .caps a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+  h1 { font: 400 clamp(44px, 7vw, 76px)/1 var(--display); margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+  p { margin: 0; }
+  .dek { font-size: 20px; max-width: 40rem; }
+  .note { font-size: 16px; color: var(--muted); max-width: 40rem; }
+  figure { margin: 0; display: grid; gap: 12px; align-content: start; min-width: 0; }
+  .stage { background: #ffffff; box-shadow: inset 0 0 0 1px var(--rule); cursor: crosshair; }
+  figcaption { display: grid; gap: 6px; }
+  .name { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .code { font: 13px var(--caps); letter-spacing: .16em; color: var(--accent); }
+  .title { font: 500 26px/1.1 var(--display); }
+  .src { font: 11px var(--caps); letter-spacing: .14em; color: var(--muted); }
+  .idea { font-size: 17px; max-width: 40rem; }
+  .usage { font-size: 15px; color: var(--muted); max-width: 40rem; }
+  code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }
+  footer { border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 8px; }
+  footer p { font-size: 15px; color: var(--muted); max-width: 46rem; }
+  a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  @media (max-width: 640px) { body { font-size: 17px; } .wrap { gap: 44px; padding-block: 32px 64px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="caps"><a href="../">motion-offcuts</a> · bulging grid</p>
+    <h1>Bulging grid</h1>
+    <p class="dek">A page of hairline squares that bulge under the pointer, and on their own under three slow swells that drift across the page and breathe.</p>
+    <p class="note">It sat behind jjmartin.co's blog, press and contact pages, with the cards' glass over it, until October 2026. Move the pointer over the frame.</p>
+  </header>
+
+  <figure>
+    <div class="stage" data-sketch="./grid.js#grid"></div>
+    <figcaption>
+      <div class="name"><span class="code">01</span><span class="title">Grid</span></div>
+      <p class="src">Canvas 2D · a 40 second loop</p>
+      <p class="idea">Each point of the lattice is pushed away from the pointer and from the swells by a force that falls off to nothing at the edge of its reach, then eased toward where it is pushed, so the cloth settles instead of snapping. The swells breathe in and out as they go.</p>
+      <p class="usage">On a page, <code>mountBackground()</code> puts it behind everything in one fixed canvas, as the site had it. Spacing, reach, strength, ink and ground are the <code>GRID</code> constant at the top of <code>grid.js</code>.</p>
+    </figcaption>
+  </figure>
+
+  <footer>
+    <p>From jjmartin.co. MIT licence; see the <a href="../README.md">README</a> for how to use a piece in your own page.</p>
+  </footer>
+</div>
+<script type="module" src="../shared/runtime.js"></script>
+</body>
+</html>
