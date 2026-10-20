@@ -32,7 +32,7 @@ A hairline grid that bulges under the pointer and under three slow swells that d
 
 ### [desktop-hero](desktop-hero/)
 
-A React hero dressed as a desktop. A wallpaper under fluted glass, a cut-out figure, posts as files and a dock, and on a phone an iOS-style home screen. Its README explains that its preview screenshots show jjmartin.co's own material, which the licence does not cover.
+A React hero dressed as a desktop: a wallpaper under fluted glass, a cut-out figure, posts as files and a dock, and on a phone an iOS-style home screen.
 
 [![Desktop hero](desktop-hero/docs/demo-desktop.jpg)](desktop-hero/)
 
