@@ -1,0 +1,32 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  min-height: 100svh;
+  background: #f4f3f0;
+  color: #1a1a1a;
+  font-family: var(--hero-serif), Georgia, serif;
+}
+
+/* The demo's page: the hero in a shell, as a site would set it. */
+.shell {
+  --hero-top: 24px;
+  width: min(1480px, calc(100% - 160px));
+  margin: 0 auto;
+  padding: 48px 0 96px;
+}
+
+@media (max-width: 900px) {
+  .shell {
+    width: calc(100% - 48px);
+    padding-top: 24px;
+  }
+}

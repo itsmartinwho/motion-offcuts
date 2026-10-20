@@ -1,0 +1,28 @@
+{
+  "name": "itsmartinwho-hero-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A personal-desktop hero for React: a wallpaper under fluted glass, a cut-out figure, posts as live file icons, and a dock — and on a phone, an iOS-style home screen.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "wallpaper": "node scripts/make-wallpaper.mjs",
+    "figure": "node scripts/build-figure.mjs"
+  },
+  "dependencies": {
+    "@paper-design/shaders-react": "^0.0.77",
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "sharp": "^0.34.5",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,1149 @@
+/* ── The hero: a personal desktop ──
+   One card — 2:1 from 901px up, 4:3 from 701 to 900px — and on a phone a
+   tall portrait home screen. Back to front: the wallpaper (the picture, the
+   fluted glass over it, the figure cut out on top), the files, the dock, and
+   the name. Sizes read off the card (cqi), not the screen.
+
+   Theming, as custom properties on the hero or any ancestor:
+     --hero-caps    the capitals face (the name, labels)  default system-ui
+     --hero-serif   the captions' face                     default Georgia
+     --hero-bg      behind everything, while loading       default #050a1a
+     --hero-top     the space above the hero on a phone (a nav), so the
+                    card fits the screen                    default 0px
+     --dock-inset   a phone's dock, from each side          default 6px */
+
+.hero {
+  --pad: clamp(16px, 4cqi, 36px);
+  --icon: clamp(44px, 5cqi, 64px);
+  --cap-w: 1.7;
+  --caption: clamp(12px, 1cqi, 13px);
+  --tile: clamp(32px, 3.1cqi, 40px);
+  --dock-gap: clamp(12px, 1.6cqi, 20px);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  border-radius: 10px;
+  background: var(--hero-bg, #050a1a);
+  color: #fff;
+  container-type: inline-size;
+}
+
+/* The narrowest 2:1 cards (a 901 to 1100px screen): the caption a little
+   narrower, to leave the files room. placement.ts was solved for it. */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .hero {
+    --cap-w: 1.5;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    --icon: clamp(44px, 6.6cqi, 52px);
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    --icon: 52px;
+    /* 32px, unless the phone's tiles (--phone-slots, written by the dock)
+       would not fit between the dock's insets on the narrowest phones. */
+    --tile: min(32px, calc((100cqi - 2 * var(--dock-inset, 6px)) / var(--phone-slots, 6) - 4px));
+    --dock-gap: 10px;
+    aspect-ratio: 10 / 16;
+    max-height: calc(100svh - var(--hero-top, 0px) - 24px);
+  }
+}
+
+/* ── Wallpaper ──
+   Three layers. The picture fills the card, centred, and the glass reads it
+   (the same cover, the same centre). The figure is a layer of its own: its
+   picture covered into a box the size of the card and anchored at --anchor
+   — as object-position on the picture and mask-position on its mask, so it
+   lands on its own cut-out at every size — and that box is then scaled down
+   to --fig-s and stood on the card's bottom edge, with --fig-x the point that
+   stays put. Real sizes, not a transform, so it is drawn sharp. Hero.tsx
+   writes each band's values (FigureFit) into --fig-a-*, --fig-s-*, --fig-x-*. */
+
+.wallpaper {
+  --anchor: var(--fig-a-wide);
+  --fig-s: var(--fig-s-wide);
+  --fig-x: var(--fig-x-wide);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--hero-bg, #050a1a);
+}
+
+@media (max-width: 900px) {
+  .wallpaper {
+    --anchor: var(--fig-a-mid);
+    --fig-s: var(--fig-s-mid);
+    --fig-x: var(--fig-x-mid);
+  }
+}
+
+@media (max-width: 700px) {
+  .wallpaper {
+    --anchor: var(--fig-a-phone);
+    --fig-s: var(--fig-s-phone);
+    --fig-x: var(--fig-x-phone);
+  }
+}
+
+/* The picture: the loading state, and what stays where there is no WebGL. */
+.wall {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+/* The fluted glass, on the picture only. */
+.glass {
+  position: absolute;
+  inset: 0;
+  animation: glassIn 700ms ease both;
+}
+
+.shader {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes glassIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The figure's layer: a card-shaped box, scaled down onto the bottom edge. */
+.figure {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--fig-x) * (1 - var(--fig-s)) * 100%);
+  width: calc(var(--fig-s) * 100%);
+  height: calc(var(--fig-s) * 100%);
+}
+
+/* The figure: the sharp picture, cut out by the feathered mask of its
+   silhouette (--fig-mask, none for a picture that is already cut out) and
+   laid over the glass. Until the picture and the mask have both arrived it
+   is not shown. */
+.still {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--anchor);
+  -webkit-mask-image: var(--fig-mask, none);
+  mask-image: var(--fig-mask, none);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-position: var(--anchor);
+  mask-position: var(--anchor);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.still[data-ready="true"] {
+  opacity: 1;
+}
+
+/* A phone's captions sit on the lower third: a gradient, not a blur, seats
+   them. Hidden above 700px. */
+.floor {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .floor {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background: linear-gradient(0deg, rgb(4 10 28 / 66%) 0%, rgb(4 10 28 / 46%) 30%, rgb(4 10 28 / 0%) 62%);
+    pointer-events: none;
+  }
+}
+
+/* ── Name ── */
+
+.name {
+  position: absolute;
+  z-index: 5;
+  top: var(--pad);
+  left: var(--pad);
+  color: #fff;
+  font-family: var(--hero-caps, system-ui), system-ui, sans-serif;
+  text-transform: uppercase;
+  text-shadow: 0 1px 12px rgb(2 6 20 / 55%);
+}
+
+.name h1 {
+  margin: 0;
+  font-size: clamp(18px, 1.9cqi, 26px);
+  font-weight: 400;
+  letter-spacing: 0.13em;
+  line-height: 1;
+}
+
+.name p {
+  margin: 9px 0 0;
+  color: rgb(255 255 255 / 72%);
+  font-size: clamp(12px, 0.95cqi, 13px);
+  letter-spacing: 0.16em;
+  line-height: 1;
+}
+
+/* ── Files ── */
+
+.files {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+
+.file {
+  position: absolute;
+  left: calc(var(--wx) * 100%);
+  top: calc(var(--wy) * 100%);
+  width: calc(var(--icon) * var(--cap-w));
+  margin-left: calc(var(--icon) * var(--cap-w) * -0.5);
+}
+
+@media (max-width: 900px) {
+  .file {
+    left: calc(var(--mx) * 100%);
+    top: calc(var(--my) * 100%);
+  }
+}
+
+.fileLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #fff;
+  text-decoration: none;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fileLink:focus-visible {
+  outline: none;
+}
+
+/* A card's picture is composed for its 16:10 plate (ArticleCardVisual), so
+   on the square icon it is drawn at that shape and centred: this box fills
+   the square's height, and the square crops its sides. Drawn into the square
+   itself, the diagram was squeezed and sat off centre. */
+.plate {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  aspect-ratio: 16 / 10;
+  transform: translateX(-50%);
+}
+
+/* A post's own picture or icon fills the square. */
+.picture,
+.custom {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.custom {
+  display: grid;
+  place-items: center;
+}
+
+.thumb {
+  position: relative;
+  display: block;
+  flex: none;
+  isolation: isolate;
+  width: var(--icon);
+  height: var(--icon);
+  overflow: hidden;
+  border-radius: 7px;
+  /* The picture's own ground and its veil at rest (ArticleCardVisual.module.css,
+     [data-icon]) — the same, so the slot does not change colour when the
+     picture mounts. No rim and no border: the picture is the edge. */
+  background:
+    linear-gradient(rgb(255 255 255 / 0.14), rgb(255 255 255 / 0.14)),
+    radial-gradient(95% 85% at 14% 4%, rgb(var(--edge) / 0.36), transparent 72%),
+    radial-gradient(115% 100% at 14% 0%, rgb(var(--deep) / 1), transparent 78%),
+    linear-gradient(rgb(var(--deep) / 0.95), rgb(var(--deep) / 0.95)),
+    rgb(var(--ground));
+  box-shadow: 0 6px 14px -8px rgb(0 0 0 / 42%);
+  transition:
+    transform 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 380ms ease;
+}
+
+/* Where the icons rest lit (no hover), the slot carries the engaged look's
+   wash too, so it does not change colour when the picture mounts over it. */
+@media (hover: none) {
+  .thumb {
+    background:
+      radial-gradient(95% 85% at 14% 4%, rgb(var(--edge) / 0.36), transparent 72%),
+      radial-gradient(115% 100% at 14% 0%, rgb(var(--deep) / 1), transparent 78%),
+      linear-gradient(rgb(var(--deep) / 0.95), rgb(var(--deep) / 0.95)),
+      rgb(var(--ground));
+  }
+
+  .thumb::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(var(--wash, 0 0 0));
+    mix-blend-mode: exclusion;
+  }
+
+  .folderThumb::before {
+    content: none;
+  }
+}
+
+.caption {
+  display: -webkit-box;
+  max-width: calc(var(--icon) * var(--cap-w));
+  overflow: hidden;
+  padding: 1px 4px 2px;
+  border-radius: 4px;
+  font-family: var(--hero-serif, Georgia), Georgia, serif;
+  font-size: var(--caption);
+  font-weight: 600;
+  line-height: 1.12;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 65%);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+@media (hover: hover) {
+  .fileLink:hover .thumb {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px -8px rgb(0 0 0 / 55%);
+  }
+}
+
+.fileLink:focus-visible .thumb {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.fileLink:focus-visible .caption {
+  background: rgb(40 104 224 / 85%);
+}
+
+/* The folder is a phone's: above it there is room for every post. */
+.folder {
+  display: none;
+}
+
+/* A phone's home screen: a staircase of posts on a 4 x 4 grid stood on the
+   dock — four high in the first column, then three, two, one (each file's
+   --pc and --pr, placement.ts) — so the right of the card and its top are
+   the figure's. The posts that do not fit are in the folder (data-fold), the step at
+   the foot. The grid's box runs from under the name to the dock, and is a
+   container: the icons are 52px where four rows fit, and shrink on a short
+   screen so the top step never reaches the name (each row is an icon, the
+   6px under it and a caption of up to two lines). */
+@media (max-width: 700px) {
+  .files {
+    inset: 66px 10px calc(var(--tile) + 18px + var(--dock-gap) + 14px) 10px;
+    container-type: size;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, auto);
+    align-content: end;
+    gap: 10px 4px;
+  }
+
+  .file {
+    --icon: min(52px, calc((100cqb - 30px) / 4 - 38px));
+    position: static;
+    grid-column: var(--pc);
+    grid-row: var(--pr);
+    width: auto;
+    margin: 0;
+  }
+
+  .file[data-fold="true"] {
+    display: none;
+  }
+
+  .folder {
+    display: block;
+  }
+
+  .thumb {
+    border-radius: 22%;
+  }
+
+  .caption {
+    width: calc(100% + 8px);
+    max-width: none;
+    margin-inline: -4px;
+    font-size: 13px;
+    text-wrap: balance;
+  }
+}
+
+/* ── Folder ── (a phone's; HeroFolder) ──
+   The tile is a frosted squircle holding a 3 x 3 of the rest's grounds. */
+
+.folderButton {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.folderThumb {
+  background: rgb(255 255 255 / 18%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow:
+    0 6px 14px -8px rgb(0 0 0 / 42%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 20%);
+}
+
+.folderMini {
+  position: absolute;
+  inset: 13%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 7%;
+}
+
+.folderMini > span {
+  border-radius: 24%;
+  background:
+    radial-gradient(130% 110% at 14% 6%, rgb(var(--edge) / 0.32), transparent 70%),
+    linear-gradient(rgb(var(--deep) / 0.85), rgb(var(--deep) / 0.85)),
+    rgb(var(--ground));
+}
+
+/* Open: a layer over the hero holding a scrim and the panel. The panel grows
+   out of the tile (--ox, --oy: the tile's centre in the panel's own box), by
+   transform; the glass is in view from the first frame and only the type
+   comes in by opacity — a parent that fades would be a backdrop root, and
+   the glass would blur nothing until it had finished. */
+.folderLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: end center;
+  /* Sat on the dock, so the figure's face stays in view above it. */
+  padding: 0 14px calc(var(--tile) + var(--dock-gap) + 26px);
+}
+
+.folderScrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: rgb(3 8 24 / 34%);
+  cursor: default;
+  opacity: 0;
+  transition: opacity 280ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.folderLayer[data-phase="open"] .folderScrim {
+  opacity: 1;
+}
+
+.folderPanel {
+  --ox: 50%;
+  --oy: 50%;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 18px 12px 16px;
+  border-radius: 30px;
+  color: #fff;
+  outline: none;
+  transform: scale(0.2);
+  transform-origin: var(--ox) var(--oy);
+  transition: transform 340ms cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+.folderLayer[data-phase="open"] .folderPanel {
+  transform: scale(1);
+}
+
+.folderLayer[data-phase="exit"] .folderPanel {
+  transition-duration: 300ms;
+}
+
+.folderGlass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 30px 60px -22px rgb(0 0 0 / 55%);
+}
+
+.folderGlass .glassEffect {
+  -webkit-backdrop-filter: blur(22px) saturate(130%);
+  backdrop-filter: blur(22px) saturate(130%);
+}
+
+.folderGlass .glassTint {
+  background:
+    linear-gradient(112deg, rgb(255 255 255 / 20%), transparent 36%),
+    rgb(14 30 70 / 36%);
+}
+
+.folderLabel,
+.folderGrid {
+  position: relative;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.folderLayer[data-phase="open"] .folderLabel,
+.folderLayer[data-phase="open"] .folderGrid {
+  opacity: 1;
+  transition: opacity 220ms ease 90ms;
+}
+
+.folderLabel {
+  margin: 0 0 14px;
+  color: rgb(255 255 255 / 88%);
+  font-family: var(--hero-caps, system-ui), system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.folderGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ── Dock ── */
+
+.dock {
+  position: absolute;
+  z-index: 6;
+  right: 0;
+  bottom: var(--dock-gap);
+  left: 0;
+  width: fit-content;
+  max-width: calc(100% - var(--pad) * 2);
+  margin-inline: auto;
+  border-radius: calc(var(--tile) * 0.46);
+}
+
+/* The dock's glass (GlassLayers): refraction, tint, rim and shine, inheriting
+   the dock's radius. Over a photograph it wants a deeper blur than over the
+   page; the prefixed property goes first. */
+.dockGlass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 16px 28px -16px rgb(0 0 0 / 50%);
+}
+
+.dockGlass .glassEffect {
+  -webkit-backdrop-filter: blur(14px) saturate(125%);
+  backdrop-filter: blur(14px) saturate(125%);
+}
+
+/* A lighter bar than the nav's: the tiles carry the dock, not its glass. */
+.dockGlass .glassOutline {
+  --rim: rgba(255, 255, 255, 0.4);
+}
+
+.dockGlass .glassTint {
+  background:
+    linear-gradient(112deg, rgba(255, 255, 255, 0.26), transparent 32%),
+    rgba(237, 237, 237, 0.07);
+}
+
+.dockRow {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  padding: calc(var(--tile) * 0.19) calc(var(--tile) * 0.22);
+  list-style: none;
+}
+
+.slot {
+  position: relative;
+  display: block;
+  padding: 0 calc(var(--tile) * 0.1);
+}
+
+.slot[data-end="true"] {
+  margin-right: calc(var(--tile) * 0.24);
+}
+
+.slot[data-end="true"]::after {
+  content: "";
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  right: calc(var(--tile) * -0.13);
+  width: 1px;
+  background: rgb(255 255 255 / 16%);
+}
+
+.dockLink {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dockLink:focus-visible {
+  outline: none;
+}
+
+.tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--tile);
+  height: var(--tile);
+  border-radius: 22%;
+  transform-origin: 50% 100%;
+  transition: transform 300ms cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+.dockLink:focus-visible .tile {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+/* An image tile: the picture fills it. `round` for a coin or an avatar. */
+.tileImage {
+  overflow: hidden;
+  box-shadow: 0 3px 8px -4px rgb(0 0 0 / 38%);
+}
+
+.tileImage img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tileRound {
+  border-radius: 50%;
+}
+
+/* A mark tile: your mark on any background (--tile-bg), in --tile-ink. A
+   mark is drawn at three-fifths of the tile; text marks are set in the caps
+   face. */
+.tileMark {
+  overflow: hidden;
+  background: var(--tile-bg, #0b0d12);
+  color: var(--tile-ink, #fff);
+  font-family: var(--hero-caps, system-ui), system-ui, sans-serif;
+  font-size: calc(var(--tile) * 0.36);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  box-shadow:
+    0 3px 8px -4px rgb(0 0 0 / 38%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 22%);
+}
+
+.tileMark > svg {
+  width: 60%;
+  height: 60%;
+}
+
+/* The glyph squircles (DockGlyphs): a coloured ground, lit from the top
+   left, seen through six flutes of the wallpaper's glass, with a
+   liquid-glass glyph on it. The flutes are a soft-light wash over the
+   ground (isolated, so they blend with the tile alone); the sheen that
+   crosses a hovered tile is ::after. */
+.tilePage {
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 3px 8px -4px rgb(0 0 0 / 45%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 22%),
+    inset 0 1px 0 rgb(255 255 255 / 38%),
+    inset 0 -1px 2px rgb(0 0 0 / 22%);
+}
+
+.tilePage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 22%) 0,
+    rgb(255 255 255 / 0%) 6%,
+    rgb(0 0 0 / 0%) 40%,
+    rgb(0 0 0 / 10%) 74%,
+    rgb(0 0 0 / 26%) 100%
+  );
+  background-size: calc(100% / 6) 100%;
+  mix-blend-mode: soft-light;
+  transition: opacity 380ms ease;
+  pointer-events: none;
+}
+
+.tilePage::after {
+  content: "";
+  position: absolute;
+  inset: 0 -100%;
+  background: linear-gradient(105deg, transparent 42%, rgb(255 255 255 / 34%) 50%, transparent 58%);
+  transform: translateX(-40%);
+  pointer-events: none;
+}
+
+/* The grounds: ultramarine, violet, magenta, coral — a run, meant to be
+   read left to right. */
+.groundUltramarine {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 18%), transparent 45%),
+    radial-gradient(120% 90% at 20% 0%, #6d5cff 0%, transparent 60%),
+    linear-gradient(150deg, #3a1fd6 0%, #2a0f9a 55%, #1a0a6a 100%);
+}
+
+.groundViolet {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 18%), transparent 45%),
+    radial-gradient(120% 90% at 20% 0%, #c27bff 0%, transparent 60%),
+    linear-gradient(150deg, #7a2fd8 0%, #5512a8 55%, #300a70 100%);
+}
+
+.groundMagenta {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 18%), transparent 45%),
+    radial-gradient(120% 90% at 20% 0%, #ff8fd0 0%, transparent 60%),
+    linear-gradient(150deg, #d43f9e 0%, #a01f7e 55%, #5e0d58 100%);
+}
+
+.groundCoral {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 18%), transparent 45%),
+    radial-gradient(120% 90% at 20% 0%, #ffd7a8 0%, transparent 60%),
+    linear-gradient(150deg, #ff9a6a 0%, #e0566a 55%, #9a2a5a 100%);
+}
+
+.glyph {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* The glyphs' parts, at rest. The ones that move on hover ease back. */
+.glyph [data-part="ink"] {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.glyph [data-part="high"],
+.glyph [data-part="low"] {
+  transition: transform 420ms cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+.glyph [data-part="waves"] {
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 12px 10px;
+}
+
+/* The line style (LineGlyphs): a squircle of barely-there glass — a faint
+   tint and a fainter rim — with the glyph in white. */
+.tileLine {
+  color: #fff;
+  background: linear-gradient(155deg, rgb(255 255 255 / 13%), rgb(255 255 255 / 3%));
+  box-shadow:
+    0 3px 8px -4px rgb(0 0 0 / 30%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 12%);
+}
+
+.lineGlyph {
+  width: 54%;
+  height: 54%;
+}
+
+/* A dock group's folder: a phone's (the desktop shows the group's tiles). A
+   pane of frost on the dock's glass, the tiles small in it, as iOS draws a
+   folder. */
+.tileFolder {
+  background: rgb(255 255 255 / 20%);
+  box-shadow:
+    0 3px 8px -4px rgb(0 0 0 / 38%),
+    inset 0 0 0 0.5px rgb(255 255 255 / 26%),
+    inset 0 1px 0 rgb(255 255 255 / 24%);
+}
+
+.tileFolderMini {
+  position: absolute;
+  inset: 16%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-content: start;
+  gap: 12%;
+}
+
+.tileFolderMini > .tile {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 26%;
+  box-shadow: none;
+}
+
+/* Open, the folder's panel holds them at full size, named. */
+.groupGrid {
+  --tile: 56px;
+}
+
+.groupGrid .tile:not(.tileRound) {
+  border-radius: 22%;
+}
+
+.slot[data-only="phone"] {
+  display: none;
+}
+
+/* Names above a hovered tile: Aboreto on a small dark glass pill. */
+.tip {
+  position: absolute;
+  bottom: calc(var(--tile) * 1.3 + 12px);
+  left: 50%;
+  padding: 7px 10px 6px;
+  border-radius: 8px;
+  background: rgb(8 12 24 / 62%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  backdrop-filter: blur(10px) saturate(130%);
+  box-shadow: inset 0 0 0 0.5px rgb(255 255 255 / 22%);
+  color: #fff;
+  font-family: var(--hero-caps, system-ui), system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition:
+    opacity 180ms ease,
+    transform 260ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  pointer-events: none;
+}
+
+/* Magnification and names: a pointer that hovers, on a screen wider than a
+   phone. */
+@media (min-width: 701px) and (hover: hover) {
+  .slot[data-d="0"] .tile {
+    transform: scale(1.3);
+  }
+
+  .slot[data-d="1"] .tile {
+    transform: scale(1.12);
+  }
+
+  .slot[data-d="0"] .tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* A page icon, engaged: its flutes relax, as a blog card's do, a sheen
+     crosses it, and its glyph does its one thing. */
+  .slot[data-d="0"] .tilePage::before {
+    opacity: 0.35;
+  }
+
+  .slot[data-d="0"] .tilePage::after {
+    animation: dockSheen 900ms cubic-bezier(0.3, 0.6, 0.3, 1) both;
+  }
+
+  /* Blog: the nib goes back to the start of its stroke and writes it. */
+  .slot[data-d="0"] .glyph [data-part="nib"] {
+    animation: nibWrite 1.25s cubic-bezier(0.45, 0, 0.25, 1) both;
+  }
+
+  .slot[data-d="0"] .glyph [data-part="ink"] {
+    animation: inkWrite 1.25s cubic-bezier(0.45, 0, 0.25, 1) both;
+  }
+
+  /* Building: the slabs part, and hold apart while it is hovered. */
+  .slot[data-d="0"] .glyph [data-part="high"] {
+    transform: translateY(-1.8px);
+  }
+
+  .slot[data-d="0"] .glyph [data-part="low"] {
+    transform: translateY(1.4px);
+  }
+
+  .slot[data-d="0"] .glyph [data-part="core"] {
+    animation: corePulse 1.1s ease-in-out infinite alternate;
+  }
+
+  /* Press: the microphone sounds — rings go out either side. */
+  .slot[data-d="0"] .glyph [data-part="waves"] {
+    animation: micWaves 1.3s ease-out infinite;
+  }
+
+  /* Contact: the plane flies off the corner and comes back round. */
+  .slot[data-d="0"] .glyph [data-part="plane"] {
+    animation: planeFly 1.1s cubic-bezier(0.5, 0, 0.3, 1) both;
+  }
+
+  .slot[data-d="0"] .glyph [data-part="trail"] {
+    animation: planeTrail 1.1s ease both;
+  }
+}
+
+@keyframes dockSheen {
+  from {
+    transform: translateX(-40%);
+  }
+  to {
+    transform: translateX(40%);
+  }
+}
+
+@keyframes nibWrite {
+  0% {
+    transform: translate(0, 0);
+  }
+  18% {
+    transform: translate(-2.1px, 0.35px);
+  }
+  72% {
+    transform: translate(3.9px, -3.25px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes inkWrite {
+  0%,
+  18% {
+    stroke-dashoffset: 1;
+  }
+  72%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes corePulse {
+  from {
+    opacity: 0.75;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes micWaves {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  30% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes planeFly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  42% {
+    opacity: 0;
+    transform: translate(10px, -10px);
+  }
+  43% {
+    opacity: 0;
+    transform: translate(-10px, 10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes planeTrail {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  30%,
+  60% {
+    opacity: 0;
+  }
+}
+
+/* A phone's dock fills the card less --dock-inset each side (raise it to
+   clear something fixed in a corner, like a floating button), the tiles in
+   it at 32px, smaller on the narrowest phones. */
+@media (max-width: 700px) {
+  .dock {
+    left: var(--dock-inset, 6px);
+    right: var(--dock-inset, 6px);
+    width: auto;
+    max-width: none;
+    border-radius: 16px;
+  }
+
+  .dockRow {
+    padding: 8px 0;
+  }
+
+  .slot {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0;
+  }
+
+  .slot[data-end="true"] {
+    margin-right: 0;
+  }
+
+  .slot[data-end="true"]::after {
+    right: 0;
+  }
+
+  .slot[data-only="desk"] {
+    display: none;
+  }
+
+  .slot[data-only="phone"] {
+    display: block;
+  }
+
+  .dockLink {
+    display: grid;
+    place-items: center;
+  }
+
+  .tip {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .thumb,
+  .glyph [data-part] {
+    transition: none;
+  }
+
+  /* The page icons hold still: no sheen and no glyph moving. */
+  .slot[data-d="0"] .tilePage::after,
+  .slot[data-d="0"] .glyph [data-part] {
+    animation: none;
+  }
+
+  /* The folder just appears, and its type fades in. */
+  .folderPanel {
+    transform: none;
+    transition: none;
+  }
+
+  .fileLink:hover .thumb {
+    transform: none;
+  }
+}
+
+/* ── Glass (GlassLayers) ──
+   A backdrop blur with a lift in colour, a rim that catches light from the
+   bottom-left corner and falls off along both edges (a gradient cut to a
+   hairline ring by a mask, which a border cannot do), a tint and an inner
+   shine. The prefixed backdrop-filter goes first: in the other order some
+   CSS builds drop the unprefixed one, which is the one Chrome reads. */
+
+.glassLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.glassEffect {
+  -webkit-backdrop-filter: blur(5px) saturate(115%);
+  backdrop-filter: blur(5px) saturate(115%);
+}
+
+.glassOutline {
+  --rim: rgba(255, 255, 255, 0.62);
+  padding: 1px;
+  background: radial-gradient(42% 210% at 0% 100%, var(--rim), transparent 72%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+}
+
+.glassTint {
+  background:
+    linear-gradient(112deg, rgba(255, 255, 255, 0.46), transparent 32%),
+    linear-gradient(96deg, rgba(182, 182, 182, 0.055), rgba(181, 181, 181, 0.04)),
+    rgba(237, 237, 237, 0.13);
+}
+
+.glassShine {
+  box-shadow: inset 2px -2px 6px -3px rgba(255, 255, 255, 0.7);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glassEffect {
+    background: rgba(20, 28, 52, 0.82);
+  }
+}

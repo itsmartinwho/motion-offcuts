@@ -1,0 +1,160 @@
+/* A post's live icon (PlateIcon). Every layer reads --engage (0 at rest, 1
+   engaged), which glass.ts eases and writes; --wash is the colour of the
+   moment. The icon is a 16:10 picture, cropped to its square by the hero. */
+
+.plate {
+  --engage: 0;
+  --wash: 0 155 155;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  /* The ground: the palette's darkest note, lifted toward its tint from the
+     top left — what the canvas is laid on, and the whole picture until it
+     has painted. */
+  background:
+    radial-gradient(95% 85% at 14% 4%, rgb(var(--edge) / 0.36), transparent 72%),
+    radial-gradient(115% 100% at 14% 0%, rgb(var(--deep) / 1), transparent 78%),
+    linear-gradient(rgb(var(--deep) / 0.95), rgb(var(--deep) / 0.95)),
+    rgb(var(--ground));
+}
+
+.glass {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* The caps face, for the canvas to read back. */
+  font-family: var(--hero-caps, system-ui), system-ui, sans-serif;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.plate[data-glass="ready"] .glass {
+  opacity: 1;
+}
+
+/* Engaged, the type is gained up so the exclusion wash can turn it inside
+   out. */
+.plate[data-engage="on"] .glass {
+  filter: brightness(calc(1 + 0.45 * var(--engage)));
+}
+
+/* The flute shading, per flute: a hairline of highlight on the leading edge
+   and a shadow that deepens toward the trailing one. One gradient, tiled
+   exactly --flutes times, lands on the canvas's flutes. It clears as the
+   glass relaxes. */
+.flutes {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    90deg,
+    rgb(var(--edge) / 0.2) 0,
+    rgb(var(--edge) / 0) 2px,
+    rgb(0 0 0 / 0) 34%,
+    rgb(0 0 0 / 0.1) 72%,
+    rgb(0 0 0 / 0.3) 100%
+  );
+  background-size: calc(100% / var(--flutes)) 100%;
+  opacity: calc(1 - 0.6 * var(--engage));
+  pointer-events: none;
+}
+
+/* A soft well under the overlay. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(62% 64% at 50% 52%, rgb(var(--ground) / 0.62), rgb(var(--ground) / 0.12) 100%);
+  opacity: calc(1 - 0.55 * var(--engage));
+  pointer-events: none;
+}
+
+/* The engaged colour, laid over the plate with `exclusion`: dark shows the
+   colour, light shows roughly its inverse. */
+.wash {
+  position: absolute;
+  inset: 0;
+  background: rgb(var(--wash));
+  mix-blend-mode: exclusion;
+  opacity: var(--engage);
+  pointer-events: none;
+}
+
+/* And a photocopier grain, lifting the blacks. */
+.grain {
+  position: absolute;
+  inset: 0;
+  background-image: var(--hero-plate-grain, none);
+  background-size: 256px 256px;
+  mix-blend-mode: lighten;
+  opacity: calc(0.05 + 0.24 * var(--engage));
+  pointer-events: none;
+}
+
+/* The default overlay: one point of light, breathing. */
+.glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.95), rgb(var(--edge) / 0.55) 34%, rgb(var(--edge) / 0) 100%);
+  transform: translate(-50%, -50%);
+  animation: breathe 5.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes breathe {
+  from {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+/* Asleep and not engaged, its CSS animations hold too. A lit plate is
+   always engaged in look: it holds unless a pointer or focus is on it. */
+.plate[data-asleep="true"]:not([data-engage="on"]) *,
+.plate[data-lit][data-asleep="true"]:not([data-engaged="true"]) * {
+  animation-play-state: paused;
+}
+
+/* At rest, small as it is, the type is the loudest thing on the plate and
+   the overlay — the actual picture — is faint, and the ground is nearly
+   black. So the type steps back to under a third, the well all but goes,
+   the ground is lifted under a veil of white, and the overlay is brought up
+   a step. Engaged, the lines come through at full strength. */
+.plate[data-glass="ready"]:not([data-engage="on"]) .glass {
+  opacity: 0.27;
+}
+
+.plate:not([data-engage="on"])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(255 255 255 / 0.14);
+  pointer-events: none;
+}
+
+.plate:not([data-engage="on"]) .scrim {
+  opacity: 0.1;
+}
+
+.plate:not([data-engage="on"]) .flutes {
+  opacity: 0.24;
+}
+
+.plate:not([data-engage="on"]) > :not(.glass, .flutes, .scrim, .wash, .grain) {
+  filter: brightness(2.1) saturate(1.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass {
+    transition: none;
+  }
+}
