@@ -1,4 +1,6 @@
-# itsmartinwho-hero-UI
+# desktop-hero
+
+Part of [motion-offcuts](../README.md). Unlike the other pieces, which are modules in plain JavaScript, this one is a React component, with a Next.js demo. Paths below are relative to this folder.
 
 A personal-desktop hero for React. Your name sits in the corner of a wallpaper read through fluted glass. A figure is cut out and stands on it. Your posts lie on it as files, each with its own live picture, and a dock holds your links. On a phone the same desktop becomes an iOS-style home screen, with the posts in a staircase, folders, and a full-width dock.
 
@@ -11,7 +13,7 @@ A personal-desktop hero for React. Your name sits in the corner of a wallpaper r
 
 ![The dock's glyph tiles mid-hover](docs/preview-dock-hover.jpg)
 
-*These previews show the hero as it was designed, on [jjmartin.co](https://jjmartin.co). The portrait, writing and company marks in them belong to that site. They are not in this repository and the license doesn't cover them. The demo ships with neutral placeholders:*
+*These previews show the hero as it was designed, on [jjmartin.co](https://jjmartin.co). The portrait, writing and company marks in them belong to that site. They are not in this repository and the [license](../LICENSE) doesn't cover them. The demo ships with neutral placeholders:*
 
 ![The demo, out of the box](docs/demo-desktop.jpg)
 
@@ -30,6 +32,7 @@ A personal-desktop hero for React. Your name sits in the corner of a wallpaper r
 ## Run the demo
 
 ```bash
+cd desktop-hero
 npm install
 npm run dev
 ```
@@ -123,10 +126,12 @@ You can mix both glyph styles in one dock. To see the line style, run the demo a
 3. Build the figure and its mask:
 
    ```bash
+   cd desktop-hero
+   npm install   # once
    npm run figure -- --photo me.jpg --silhouette me.svg --out public/hero
    ```
 
-   This writes `figure.webp`, the photo with the background flattened, and `figure-mask.png`, the silhouette pulled in a pixel and feathered so there's no halo or cut line.
+   This writes `figure.webp`, the photo with the background flattened, and `figure-mask.png`, the silhouette pulled in a pixel and feathered so there's no halo or cut line. Point `--out` at your own project's `public/hero` to build them in place.
 4. Pass `figure={{ src: "/hero/figure.webp", mask: "/hero/figure-mask.png" }}`. Then move it with `wide`, `mid` and `phone` until it stands where you want.
 
 A cut-out PNG (transparent background) works too: pass it as `src` with no `mask`.
@@ -136,6 +141,7 @@ A cut-out PNG (transparent background) works too: pass it as `src` with no `mask
 `public/demo/wallpaper.webp` is generated, not photographed, so you're free to use it. Make another with a different seed or colour:
 
 ```bash
+cd desktop-hero
 npm run wallpaper -- public/wallpaper.webp --seed 12 --hue violet   # blue | violet | teal | ember
 ```
 
@@ -164,4 +170,4 @@ Current Chrome, Edge, Safari (16+) and Firefox. It needs CSS container queries, 
 
 ## License
 
-[MIT](LICENSE): the code, the glyphs, the placeholder figure and the generated wallpaper. The preview screenshots are of jjmartin.co. The portrait, writing and company marks in them are not covered by the license.
+[MIT](../LICENSE), the same as the rest of the repository: the code, the glyphs, the placeholder figure and the generated wallpaper. The preview screenshots are of jjmartin.co. The portrait, writing and company marks in them are not covered by the license.
