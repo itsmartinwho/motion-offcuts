@@ -1,8 +1,8 @@
 # motion-offcuts
 
-Animations cut from [jjmartin.co](https://jjmartin.co), free to reuse.
+Animations and a desktop hero from [jjmartin.co](https://jjmartin.co), free to reuse.
 
-These are pieces JJ designed for his site and then cut, in October 2026: most from the home page, and the grid that sat behind the rest of it. Each one is a small module in plain JavaScript, with a demo page that runs every piece of its group. The demos use stand-in pictures made in code, so there is nothing to download and nothing of the site's own imagery in them. Take what is useful.
+These are pieces JJ designed for his site and then cut, in October 2026: most from the home page, and the grid that sat behind the rest of it. Alongside them is the desktop hero he designed for the site. The animations are small modules in plain JavaScript, with a demo page that runs every piece of their group. The hero is a React component with a Next.js demo. The demos use stand-in pictures made in code, so there is nothing to download and nothing of the site's own imagery in them. Take what is useful.
 
 ## What is here
 
@@ -30,11 +30,17 @@ A hairline grid that bulges under the pointer and under three slow swells that d
 
 [![Bulging grid](bulging-grid/screenshots/grid.jpg)](bulging-grid/)
 
+### [desktop-hero](desktop-hero/)
+
+A React hero dressed as a desktop: a wallpaper under fluted glass, a cut-out figure, posts as files and a dock, and on a phone an iOS-style home screen.
+
+[![Desktop hero](desktop-hero/docs/demo-desktop.jpg)](desktop-hero/)
+
 Each folder has its own README with the pieces, their options and where they came from.
 
 ## Run it
 
-There is no build step and nothing to install. Any static server will do:
+The animations have no build step and nothing to install. Any static server will do:
 
 ```
 python3 -m http.server
@@ -44,9 +50,17 @@ Then open `http://localhost:8000/`. The demo pages need a server because they lo
 
 Pages load Aboreto, Cormorant Garamond and EB Garamond from Google Fonts. Everything else is in the repo.
 
+The desktop hero is the exception. It is a React component with a Next.js demo, so it needs Node and an install:
+
+```
+cd desktop-hero && npm install && npm run dev
+```
+
+Then open `http://localhost:3000/`.
+
 ## Use a piece in your own page
 
-Every piece is a module that exports `sketches = { name: async (env) => sketch }`. `shared/runtime.js` mounts them, runs their frames only while they are on screen, and draws the controls:
+This is for the plain-JavaScript pieces. Each is a module that exports `sketches = { name: async (env) => sketch }`. `shared/runtime.js` mounts them, runs their frames only while they are on screen, and draws the controls:
 
 ```html
 <link rel="stylesheet" href="shared/stage.css">
@@ -68,6 +82,8 @@ To use one without the runtime, import the module, call `sketches.name(env)` wit
 
 The pictures the pieces draw over (the figure, the marks, the cards) are in each group's `placeholders.js`. Swap that file for your own and the pieces follow.
 
+The desktop hero is used as a React component instead: copy `desktop-hero/src/hero/` into your project and see its [README](desktop-hero/README.md) for the props.
+
 ## Credits
 
 The pieces are reworkings of ideas, not copies of anyone's code:
@@ -79,8 +95,10 @@ The pieces are reworkings of ideas, not copies of anyone's code:
 - The split-flap departure board, for the retype.
 - YUDHO's "I will survive" inspired the idea of a sprite in the rain. None of its art is included.
 
+The desktop hero uses [Paper Design's shaders](https://github.com/paper-design/shaders) (Apache-2.0) for its fluted glass, as a dependency. Its post icons port the shader's contour flute to a 2D canvas.
+
 ## Licence
 
-MIT, see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE). It covers the whole repo, except the portrait, writing and company marks of jjmartin.co that show in the screenshots in `desktop-hero/docs/`.
 
 By José (JJ) Martín Quesada, [@itsmartinwho](https://github.com/itsmartinwho).
